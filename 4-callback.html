@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo - React</title>
+</head>
+<body class="bg-gray-700 text-gray-300">
+    <div id="root"></div>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+
+        
+
+        function App() {
+            const [is12Hours, setIs12Hours] = React.useState(false)
+            const [time, setTime] = React.useState('')
+
+            const updateTime = React.useCallback(() => {
+                const now = new Date(Date.now())
+
+                const formattedTime = now.toLocaleTimeString('pt-BR', {
+                    hour12: is12Hours,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })
+
+                setTime(formattedTime)
+            }, [is12Hours])
+
+            React.useEffect(() => {
+                updateTime()
+                
+                const timer = setInterval(() => {
+                    updateTime()
+                }, 1000)
+
+                return () => {
+                    clearInterval(timer)
+                }
+            }, [updateTime])
+
+            return (
+                <main className="h-screen flex justify-center items-center">
+                    <div className="flex flex-col gap-4 items-center">
+                        <div className="text-5xl font-bold">
+                            {time}
+                        </div>
+
+                        <button 
+                            onClick={() => setIs12Hours(!is12Hours)}
+                            className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                        >
+                            Alterar para formato {is12Hours ? '24h' : '12h'}
+                        </button>
+                    </div>
+                    
+                </main>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(
+            <App />
+        )
+    </script>
+</body>
+</html>
